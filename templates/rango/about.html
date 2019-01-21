@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+
+<!-- we will be using static files within the template.-->
+<!--we can access the media in the static directories via use of static template tag -->
+<html>
+    <head>
+        <title>Rango about</title>
+        <!-- CSS-->
+        <link rel="stylesheet" href="{% static "css/base.css" %}" />
+        <!-- Javascript -->
+        <script src="{% static "js/jquery.js" %}"></script>
+    </head>
+    
+    <body>
+        <div>
+            This tutorial has been put together by Lynda Faller.
+        </div>
+        <div>
+            <img src="{{ MEDIA_URL}}cat.jpg" 
+                 alt="Picture of cat" />
+        </div>
+    </body>
+</html>
