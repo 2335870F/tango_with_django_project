@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib import admin
+from django.template.defaultfilters import slugify
 
 class Category(models.Model):
     name = models.CharField(max_length=128, unique=True)
@@ -10,9 +11,17 @@ class Category(models.Model):
     #followed by migrating your DB, committing the changes to the database by issuing python manage.py migrate
     views = models.IntegerField(default=0)
     likes = models.IntegerField(default=0)
+    slug = models.SlugField(unique=True)
+    #To make readable URLs, we need to include a slug field in the Category
+    #model. 
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Category, self).save(*args, **kwargs)
+        
     class Meta:
         #to fix the automatic spelling of plural set to Categorys
-        verbose_name_plural='Categories'
+        verbose_name_plural='categories'
+        
     def __str__(self):
         return self.name
     
@@ -35,3 +44,14 @@ class Page(models.Model):
 class PageAdmin(admin.ModelAdmin):
     list_display = ('title', 'category', 'url')
     
+#Now that the model has been updated, the chnages must now be propagated
+#to the database. However, since data already exists within the database,
+#we need to consider the implications of the change. Essentially, for all
+#the existing category names, we want to turn them into slugs (which is
+#performed when the record is initially saved). When we update the models
+#via the migration tool, it will add the slug field and provide the option
+#of populating the field with a default value. Of course, we want a specific
+#value for each entry, so we will first need to perform the migration, then
+    #rerun the population script. This is because the population script will
+    #explicitly call the save() method from models.py on each entry, and thus
+    #update the slug accordingly for each entry

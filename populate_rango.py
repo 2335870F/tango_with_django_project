@@ -10,6 +10,7 @@ from rango.models import Category, Page
 #You need to do this stuff before importing your models because we first need to initialise our Django
 #infrastructure
 
+#run the population script everytime this is modified
 
 #what is going on is essentially a series of function calls to two small
 #functions, add_page(), and add_cat() defined towards the end of the module.
@@ -24,25 +25,33 @@ def populate():
 
     python_pages = [
         {"title": "Official Python Tutorial",
-         "url":"http://docs.python.org/2/tutorial/"},
+         "url":"http://docs.python.org/2/tutorial/",
+         "views": 200},
         {"title":"How to Think like a Computer Scientist",
-         "url":"http://www.greenteapress.com/thinkpython/"},
+         "url":"http://www.greenteapress.com/thinkpython/",
+         "views": 300},
         {"title":"Learn Python in 10 Minutes",
-         "url":"http://www.korokithakis.net/tutorials/python/"} ]
+         "url":"http://www.korokithakis.net/tutorials/python/",
+         "views":400} ]
     
     django_pages = [
         {"title":"Official Django Tutorial",
-         "url":"https://docs.djangoproject.com/en/1.9/intro/tutorial01/"},
+         "url":"https://docs.djangoproject.com/en/1.9/intro/tutorial01/",
+         "views": 40},
         {"title":"Django Rocks",
-         "url":"http://www.djangorocks.com/"},
+         "url":"http://www.djangorocks.com/",
+         "views": 30},
         {"title":"How to Tango with Django",
-         "url":"http://www.tangowithdjango.com/"} ]
+         "url":"http://www.tangowithdjango.com/",
+         "views": 1000} ]
 
     other_pages = [
         {"title":"Bottle",
-         "url":"http://bottlepy.org/docs/dev/"},
+         "url":"http://bottlepy.org/docs/dev/",
+         "views": 50},
         {"title":"Flask",
-         "url":"http://flask.pocoo.org"} ]
+         "url":"http://flask.pocoo.org",
+         "views": 100} ]
     #each key/value pairing represents the name of the category as the key, and
     #an additional dictionary containing additional information relating to the
     #category as the value.
@@ -64,7 +73,7 @@ def populate():
         #to access value you would do cat_data["pages"]
         c = add_cat(cat, cat_data["views"], cat_data["likes"])
         for p in cat_data["pages"]:
-            add_page(c, p["title"], p["url"])
+            add_page(c, p["title"], p["url"], p["views"])
 
     #Print out the categories we have added.
     for c in Category.objects.all():
@@ -77,7 +86,7 @@ def populate():
 #it checks if the entry exists in the database
 #if it doesn't exist, the get_or_create() method creates it. if it does exist, then a reference to the specific model
 #instance is returned
-def add_page(cat, title, url, views=0):
+def add_page(cat, title, url, views):
     p = Page.objects.get_or_create(category=cat, title=title)[0]
     p.url=url
     p.views=views
