@@ -1,3 +1,5 @@
+from rango.forms import CategoryForm
+from rango.forms import PageForm
 from django.shortcuts import render
 from django.http import HttpResponse
 from rango.models import Category, Page
@@ -5,7 +7,7 @@ def index(request):
     category_list = Category.objects.order_by('-likes')[:5]
     page_list = Page.objects.order_by('-views')[:5]
     context_dict = {'categories': category_list, 'pages': page_list}
-    return render(request, 'rango/index.html', context_dict)
+    return render(request, 'rango/index.html', context=context_dict)
 
 def show_category(request, category_name_slug):
     #Create a context dictionary which we can pass to the template rendering engine
@@ -89,4 +91,85 @@ def about(request):
  #   html2="Rango says here is the about page." + '<a href="/rango/">Index</a>'
  #   return HttpResponse(html2)
     return render(request, 'rango/about.html', context=context_dict)
-	
+def add_category(request):
+    #The new add_category() view adds several key pieces of functionality for handling forms.
+    #First, we create a CategoryForm(), then we check if the HTTP request was
+    #a POST i.e. if the user submitted data via the form. We can then handle the
+    #POST request through the same URL. The add_category() view function can
+    #handle 3 diff scenarios: showing a new, blank form for adding a category;
+    #saving form data provided by the user to the associated model, and rendering
+    #the Rango homepage; and,
+    #if there are errors, redisplay the form with error messages
+    form = CategoryForm()
+    #A HTTP POST?
+    if request.method =='POST':
+        form = CategoryForm(request.POST)
+        #Have we been provided with a valid form?
+        if form.is_valid():
+            #Save the new category to the database.
+            category=form.save(commit=True)
+            print(category, category.slug)
+            #Now that the category is saved
+            #We could give a confirmation message
+            #But since the most recent category added is on the index page
+            #Then we can direct the user back to the index page
+            return index(request)
+        else:
+            #The supplied form contained errors -
+            #just print them to the terminal
+            #This error I think is "Please fill out this field!"
+            #actually i think Please fill out this field isnt an error we
+            #wrote, it's an automatic one given by django which could come from
+            #print form.errors?
+            print(form.errors)
+    #Will handle the bad form, new form, or no form supplied cases.
+    #Render the form with error messages if any.
+    return render(request, 'rango/add_category.html', {'form': form})
+def add_page(request, category_name_slug):
+    try:
+        category = Category.objects.get(slug=category_name_slug)
+    except category.DoesNotExist:
+        category = None
+    
+    form=PageForm()
+    if request.method=='POST':
+        form = PageForm(request.POST)
+        if form.is_valid():
+            if category:
+                page = form.save(commit=False)
+                page.category=category
+                page.views = 0
+                page.save()
+                return show_category(request, category_name_slug)
+            else:
+                print(form.errors)
+    context_dict = {'form':form, 'category': category}
+    return render(request, 'rango/add_page.html', context_dict)
+
+#A HTTP GET is used to request a representation of the specified resource.
+#We use a HTTP GET to retrieve a particular resource, whether it is a webpage,
+#image, file. In contrast, a HTTP POST submits data from the clinet's
+#web browser to be processed. This type of request is used when submitting
+#the contents of a HTML form. Ultimately, a HTTP POST may end up being
+#programmed to create a new resource (a new DB entry) on the server, which can
+#later be accessed through a HTTP GET request.
+#Django's form handling machinery processes the data returned from a user's
+#browser via a HTTP POST request. It not only handles the saving of form
+#data into the chosen model, but will also automatically generate error
+#messages for each form field if required. Django will not store any
+#submitted forms with missing information that could potentially cause
+#problems for your database's referential integrity is what this means.
+#So, supplying no value in the category name field will return an error as the
+#field cannot be blank.
+#add_category.html will contain the relevant Django template code and HTML for the form and page.
+
+#Questions at the end of ch7 of TWD: If you don't enter in a category name on the add category form
+# and hit Submit, you get an error message "Please fill out this field.". This is because we required
+#this field be filled in by making it visible in forms.py and listing it as one of the
+#fields for the CategoryForm class!
+#When you try to add a category that already exists, you get an error message
+#saying "Category with this Name already exists.
+#When you visit a category that does not exist (http://127.0.0.1:8000/rango/category/pumpkin/)
+#you get an error message "The specified category does not exist!" which comes
+#from the template message we created in category.html
+

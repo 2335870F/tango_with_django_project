@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.template.defaultfilters import slugify
 
 class Category(models.Model):
+ #   max_length=128
     name = models.CharField(max_length=128, unique=True)
     #update the Category model to include the additional atttributes views and likes
     #where the default values for each are both zero (0).
@@ -12,6 +13,7 @@ class Category(models.Model):
     views = models.IntegerField(default=0)
     likes = models.IntegerField(default=0)
     slug = models.SlugField(unique=True)
+    
     #To make readable URLs, we need to include a slug field in the Category
     #model. 
     def save(self, *args, **kwargs):
@@ -41,8 +43,8 @@ class Page(models.Model):
     #implementing the __str__() methods allows for a display of the string representation
     #of the object
 
-class PageAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'url')
+#class PageAdmin(admin.ModelAdmin):
+ #   list_display = ('title', 'category', 'url')
     
 #Now that the model has been updated, the chnages must now be propagated
 #to the database. However, since data already exists within the database,
