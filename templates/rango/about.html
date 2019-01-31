@@ -1,30 +1,16 @@
-<!DOCTYPE html>
+{% extends 'rango/base.html' %}
 {% load staticfiles %}
+{% block title_block %}
+    About
+{% endblock %}
 
-<!-- we will be using static files within the template.-->
-<!--we can access the media in the static directories via use of static template tag -->
-<html>
-    <head>
-        <title>Rango about</title>
-        <!-- CSS-->
-        <link rel="stylesheet" href="{% static "css/base.css" %}" />
-        <!-- Javascript -->
-        <script src="{% static 'js/jquery.js' %}"></script>
-    </head>
-      
-    <body>
-        <h1>Rango says here is the about page.</h1>
-        
-            This tutorial has been put together by Lynda Faller.
-        
-        <div>
-            
-            <a href="/rango/">Index</a><br />
-
-            <img src="{{ MEDIA_URL}}cat.jpg" 
-                 alt="Picture of cat" />
-            <img src="/static/images/rango.jpg"
-                 alt="Picture of Rango" />
-        </div>
-    </body>
-</html>
+{% block body_block %}
+    <h1>Rango says here is the about page.</h1> 
+    This tutorial has been put together by Lynda Faller.    
+    <div>
+        <img src="{{ MEDIA_URL}}cat.jpg" 
+            alt="Picture of cat" />
+        <img src="/static/images/rango.jpg"
+            alt="Picture of Rango" />
+    </div>
+{% endblock %}

@@ -1,21 +1,32 @@
 from django.conf.urls import url
 from rango import views
 
+app_name = 'rango'
+
 urlpatterns=[
-#the mapping in tango_with_django_project/urls.py looks for URL strings that match the patterns ^rango/. When 
-#a match is made the remainder of the URL string is then passed onto and handled by rango.urls, this file, through the 
-#use of the other urls.py file's include() function 
     url(r'^$', views.index, name='index'),
     #map the about() view to /rango/about/
     url(r'^about/$', views.about, name='about'),
+    url(r'^add_category/$', views.add_category, name='add_category'),
+    url(r'^category/(?P<category_name_slug>[\w\-]+)/$', views.show_category, name='show_category'),
+    url(r'^category/(?P<category_name_slug>[\w\-]+)/add_page/$', views.add_page, name='add_page'),
+ 
+]
+
     #now we need to map the add_category view to a URL. In the template we
     #have used the URL /rango/add_category/ in the form's action attribute.
     #We now need to create a mappting from the URL to the view. 
-    url(r'^add_category/$', views.add_category, name='add_category'),
-    url(r'^category/(?P<category_name_slug>[\w\-]+)/add_page/$', views.add_page, name='add_page'),
-    url(r'^category/(?P<category_name_slug>[\w\-]+)/$',
-        views.show_category, name='show_category'),
-]
+#the mapping in tango_with_django_project/urls.py looks for URL strings that match the patterns ^rango/. When 
+#a match is made the remainder of the URL string is then passed onto and handled by rango.urls, this file, through the 
+#use of the other urls.py file's include() function
+
+#Django provides the ability to namespace URL configuration modules
+#for each individual app that you employ in your project
+#adding an app_name variable to your app's urls.py module is enough.
+#This then means that any URL you reference from the rango app could be
+#done so like "<a href='{% url 'rango:about' %}">About</a> where the colon
+#in the url command separates the namespace from the URL name.
+#This is an advanced feature for when multiple apps are in presence!
     #invokes view.show_category() when the URL pattern in quotes is matched 
     #we have added a parameter name within the URL pattern here. When you
     #create a paramtereised URL you need to ensure that the parameters that you
