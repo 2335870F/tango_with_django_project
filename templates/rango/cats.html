@@ -1,0 +1,21 @@
+<ul>
+{% if cats %}
+    {% for c in cats %}
+        {% if c == act_cat %}
+        <li>
+        <strong><a href="{% url 'show_category' c.slug %}">{{ c.name }}</a>
+        </strong>
+        </li>
+    {% else %}
+        <li>
+            <a href="{% url 'show_category' c.slug %}">{{ c.name }}</a>
+        </li>
+    {% endif %}
+    {% endfor %}
+    
+{% else %}
+    <li><strong>There are no categories present.</strong></li>
+{% endif %}
+</ul>
+
+<!--In the template, we check to see if the category being displayed is the same as the category being passed through during the for loop (i.e. c==act_cat). If so, we highlight the category name by making it bold through use of the strong tag.-->

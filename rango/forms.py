@@ -1,6 +1,7 @@
 #you could put the forms in the models.py
 from django import forms
-from rango.models import Page, Category
+from django.contrib.auth.models import User
+from rango.models import Page, Category, UserProfile
 
 #helper class that allows you to create a Django form from a pre-
 #existing model which is defined for ur app(like Category or Page)
@@ -97,3 +98,24 @@ class PageForm(forms.ModelForm):
         #for url field. Both fields provide text entry for users. The max_length
         #parameters we supply to our fields are identical to the maximum length
         #of each field we specified in the underlying data models (models.py)
+class UserForm(forms.ModelForm):
+    #there is a default password attribute for a User model instance.
+    #However, it won't hide it when the user types in
+    #By updating the password attribute, we can specify that the
+    #Charfield instance should hide the users input through the
+    #passwordinput() widget!!!
+    password = forms.CharField(widget=forms.PasswordInput())
+
+    #describes additional properties about the particular class to which it belongs.
+    #each meta class must supply a model field
+    #in the case of the UserForm class, the associated model is the User model
+    #Need to specify the fields or the fields to exclude, to indicate
+    #which should be on the rendered form!
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password')
+        
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ('website', 'picture')

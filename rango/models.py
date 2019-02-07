@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib import admin
 from django.template.defaultfilters import slugify
+from django.contrib.auth.models import User
 
 class Category(models.Model):
  #   max_length=128
@@ -42,6 +43,16 @@ class Page(models.Model):
     #method. It generates a string representation of the class.
     #implementing the __str__() methods allows for a display of the string representation
     #of the object
+
+class UserProfile(models.Model):
+    #This line is required. Links UserProfile to a User model instance.
+    user = models.OneToOneField(User)
+    #The additional attributes we wish to nclude.
+    website = models.URLField(blank=True)
+    picture = models.ImageField(upload_to='profile_images', blank=True)
+    #Override the __unicode__() method to return out something meaningful!
+    def __str__(self):
+        return self.user.username
 
 #class PageAdmin(admin.ModelAdmin):
  #   list_display = ('title', 'category', 'url')
